@@ -8,7 +8,8 @@ private ["_compromised","_cambiar","_aeropuertos","_arrayCivVeh","_player","_siz
 _cambiar = "";
 _aeropuertos = aeropuertos + puestos + (controles select {isOnRoad (getMarkerPos _x)});
 _aeropuertos1 = aeropuertos;
-_arrayCivVeh = arrayCivVeh + [civHeli] + civBoats;
+_proidModOffroadCiv = ["Steerable_Parachute_F", "C_Quadbike_01_F"];
+_arrayCivVeh = arrayCivVeh + [civHeli] + civBoats + _proidModOffroadCiv;
 _compromised = _player getVariable "compromised";
 
 if (vehicle _player != _player) then
@@ -26,9 +27,18 @@ if (vehicle _player != _player) then
 	}
 else
 	{
+	_warnStr = ["You cannot go Undercover while:"];
+	if(primaryWeapon _player != "") then {_warnStr append ["\n\nA primary weapon is visible"]};
+	if(secondaryWeapon _player != "") then {_warnStr append ["\n\nA secondary weapon is visible"]};
+	if(handgunWeapon _player != "") then {_warnStr append ["\n\nA handgun is visible"]};
+	if(vest _player != "") then {_warnStr append ["\nWearing a vest"]};
+	if(getNumber (configfile >> "CfgWeapons" >> headgear _player >> "ItemInfo" >> "HitpointsProtectionInfo" >> "Head" >> "armor") > 2) then {_warnStr append ["\nWearing a helmet"]};
+	if(hmd _player != "") then {_warnStr append ["\nWearing NVGs"]};
+	if(not(uniform _player in civUniforms)) then {_warnStr append  ["\nWearing a military uniform"]};
 	if ((primaryWeapon _player != "") or (secondaryWeapon _player != "") or (handgunWeapon _player != "") or (vest _player != "") or (getNumber (configfile >> "CfgWeapons" >> headgear _player >> "ItemInfo" >> "HitpointsProtectionInfo" >> "Head" >> "armor") > 2) or (hmd _player != "") or (not(uniform _player in civUniforms))) then
 		{
-		hint "You cannot go Undercover while:\n\nA weapon is visible\nWearing a vest\nWearing a helmet\nWearing NVGs\nWearing a mil uniform";
+		hint (_warnStr joinString "");
+		//hint "You cannot go Undercover while:\n\nA weapon is visible\nWearing a vest\nWearing a helmet\nWearing NVGs\nWearing a mil uniform";
 		_cambiar = "Init";
 		};
 	if (dateToNumber date < _compromised) then
@@ -39,17 +49,64 @@ else
 	};
 
 if (_cambiar != "") exitWith {};
-
-if ({((side _x== muyMalos) or (side _x== malos)) and (((_x knowsAbout _player > 1.4) and (_x distance _player < 500)) or (_x distance _player < 350))} count allUnits > 0) exitWith
+	
+if (
 	{
+		(
+			(
+				side _x== muyMalos
+			) 
+			or 
+			(
+				side _x== malos
+			)
+		) 
+		and 
+		(
+			(
+				(
+					_x knowsAbout _player > 1.4
+				) 
+				and 
+				(
+					_x distance _player < 500
+				)
+			)
+			or 
+			(
+				(
+					(
+						(
+							time - 
+								( 
+									(
+										_x targetKnowledge _player
+									)
+									select 2
+								)
+						)
+						< 120
+					)
+					and 
+					(
+						_x distance _player < 350
+					)
+				)
+			)
+		)
+	}
+	count allUnits > 0
+)
+
+exitWith 
+{
 	hint "You cannot go Undercover while enemies are spotting you";
-	if (vehicle _player != _player) then
+	if (vehicle _player != _player) then {
 		{
-		{
-		if ((isPlayer _x) and (captive _x)) then {[_x,false] remoteExec ["setCaptive"]; _x setCaptive false; reportedVehs pushBackUnique (vehicle _player); publicVariable "reportedVehs"}
+			if ((isPlayer _x) and (captive _x)) then {[_x,false] remoteExec ["setCaptive"]; _x setCaptive false; reportedVehs pushBackUnique (vehicle _player); publicVariable "reportedVehs"}
 		} forEach ((crew (vehicle _player)) + (assignedCargo (vehicle _player)) - [_player]);
-		};
 	};
+};
 
 _base = [_aeropuertos,_player] call BIS_fnc_nearestPosition;
 _size = [_base] call A3A_fnc_sizeMarker;
@@ -90,13 +147,13 @@ while {_cambiar == ""} do
 					}
 				else
 					{
-					if ((_tipo != civHeli) and (!(_tipo in civBoats))) then
+					if ((_tipo != civHeli) and (!(_tipo in civBoats)) and (!(_tipo in _proidModOffroadCiv))) then
 						{
 						if !(isOnRoad position _veh) then
 							{
 							if (count (_veh nearRoads 50) == 0) then
 								{
-								if ({((side _x== muyMalos) or (side _x== malos)) and ((_x knowsAbout _player > 1.4) or (_x distance _player < 350))} count allUnits > 0) then {_cambiar = "Carretera"};
+								if ({((side _x== muyMalos) or (side _x== malos)) and ((_x knowsAbout _player > 1.4) or ((_x knowsAbout _player > 0) and (_x distance _player < 350)))} count allUnits > 0) then {_cambiar = "Carretera"};
 								};
 							};
 						if (hayACE) then
@@ -209,6 +266,7 @@ switch _cambiar do
 		{
 		hint "You cannot stay Undercover while showing:\n\nA weapon is visible\nWearing a vest\nWearing a helmet\nWearing NVGs\nWearing a mil uniform\n\nThe enemy added you to their Wanted List";
 		_player setVariable ["compromised",dateToNumber [date select 0, date select 1, date select 2, date select 3, (date select 4) + 30]];
+		[] spawn A3A_fnc_statistics;
 		};
 	case "Compromised": {hint "You left your vehicle and you are still on the Wanted List"};
 	case "Distancia":
