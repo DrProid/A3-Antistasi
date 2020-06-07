@@ -60,7 +60,7 @@ if(!(isNil {laptop_order})) then {
 	
 	[laptop_table,["Move this asset", "moveHQObject.sqf",nil,0,true,true,"","(_this == theBoss)"]] remoteExec ["addAction", 0, true];
 	
-	_modVeh = [["I_UAV_01_F",75],["C_Quadbike_01_F",100]];
+	_modVeh = [["C_UAV_06_F",75], ["C_IDAP_UAV_01_F",100],["C_Quadbike_01_F",100]];
 	{
 		_veh = _x select 0;
 		_price = _x select 1;

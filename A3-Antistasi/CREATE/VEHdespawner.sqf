@@ -31,8 +31,10 @@ while {alive _veh} do
 	{
 	if ((not([distanciaSPWN,1,_veh,buenos] call A3A_fnc_distanceUnits)) and (not([distanciaSPWN,1,_veh,muyMalos] call A3A_fnc_distanceUnits)) and (not([distanciaSPWN,1,_veh,malos] call A3A_fnc_distanceUnits)) and (not(_veh in staticsToSave)) and (_veh distance getMarkerPos respawnBuenos > 100)) then
 		{
-		if (_veh in reportedVehs) then {reportedVehs = reportedVehs - [_veh]; publicVariable "reportedVehs"};
-		deleteVehicle _veh
+		if (((_veh in vehPlayerUAV) and ((fuel _veh == 0) or (getDammage _veh == 1))) or not(_veh in vehPlayerUAV)){
+			if (_veh in reportedVehs) then {reportedVehs = reportedVehs - [_veh]; publicVariable "reportedVehs"};
+			deleteVehicle _veh		
+		};
 		};
 	sleep 60;
 	};

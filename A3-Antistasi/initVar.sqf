@@ -204,7 +204,7 @@ NVGoggles = if (!hayIFA) then {["NVGoggles_OPFOR","NVGoggles_INDEP","O_NVGoggles
 
 arrayCivVeh = if !(hayIFA) then
 	{
-	["C_Hatchback_01_F","C_Hatchback_01_sport_F","C_Offroad_01_F","C_SUV_01_F","C_Van_01_box_F","C_Van_01_fuel_F","C_Van_01_transport_F","C_Truck_02_transport_F","C_Truck_02_covered_F","C_Offroad_02_unarmed_F"];
+	["C_UAV_06_F", "C_IDAP_UAV_01_F", "Steerable_Parachute_F", "C_Quadbike_01_F", "C_Hatchback_01_F","C_Hatchback_01_sport_F","C_Offroad_01_F","C_SUV_01_F","C_Van_01_box_F","C_Van_01_fuel_F","C_Van_01_transport_F","C_Truck_02_transport_F","C_Truck_02_covered_F","C_Offroad_02_unarmed_F"];
 	}
 else
 	{
@@ -361,6 +361,7 @@ vehPlanes = vehNATOAir + vehCSATAir + [vehSDKPlane];
 vehAttackHelis = vehCSATAttackHelis + vehNATOAttackHelis;
 vehFixedWing = [vehNATOPlane,vehNATOPlaneAA,vehCSATPlane,vehCSATPlaneAA,vehSDKPlane];
 vehUAVs = [vehNATOUAV,vehCSATUAV];
+vehPlayerUAV = [["C_UAV_06_F"], ["C_IDAP_UAV_01_F"]];
 vehAmmoTrucks = [vehNATOAmmoTruck,vehCSATAmmoTruck];
 vehAPCs = vehNATOAPC + vehCSATAPC;
 vehTanks = [vehNATOTank,vehCSATTank];

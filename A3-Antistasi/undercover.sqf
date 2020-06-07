@@ -8,8 +8,8 @@ private ["_compromised","_cambiar","_aeropuertos","_arrayCivVeh","_player","_siz
 _cambiar = "";
 _aeropuertos = aeropuertos + puestos + (controles select {isOnRoad (getMarkerPos _x)});
 _aeropuertos1 = aeropuertos;
-_proidModOffroadCiv = ["Steerable_Parachute_F", "C_Quadbike_01_F"];
-_arrayCivVeh = arrayCivVeh + [civHeli] + civBoats + _proidModOffroadCiv;
+//_proidModOffroadCiv = ["Steerable_Parachute_F", "C_Quadbike_01_F"];
+_arrayCivVeh = arrayCivVeh + [civHeli] + civBoats;// + _proidModOffroadCiv;
 _compromised = _player getVariable "compromised";
 
 if (vehicle _player != _player) then
